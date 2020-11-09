@@ -19,23 +19,23 @@ function getAsins() {
 function getHighlights() {  // iterate through all books; return hash {title: title, author: author, highlights: [{content: content, location: location, note: note}] }
   const urls = getAsins();
   //urls.forEach(url => function() {
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      let doc = this.responseXML;
-      const allHighlights = doc.getElementsByClassName("kp-notebook-highlight");
-      const highlights = Array.prototype.map.call(allHighlights, function(b) { return b.textContent; }).join("| ");
-      const title = doc.querySelector('h3').textContent;
-      alert(title + ", HIGHLIGHTS: " + highlights);
-    }
-  };
-  // iterate
-  //urls.forEach(url => function() {
-  xhttp.open("GET", `${urls[3]}`, true);
-  xhttp.responseType = "document";
-  xhttp.send();
-//})
-
+  let highlights = [];
+  urlss = [urls[0], urls[3], urls[21]]; //atm
+  urlss.forEach(url => {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        let doc = this.responseXML;
+        const allHighlights = doc.getElementsByClassName("kp-notebook-highlight");
+        highlights.push(Array.prototype.map.call(allHighlights, function(b) { return b.textContent; }).join("| "));
+        const title = doc.querySelector('h3').textContent;
+        alert(title + ", HIGHLIGHTS: " + highlights); //atm
+      }
+    };
+    xhttp.open("GET", `${url}`, true);
+    xhttp.responseType = "document";
+    xhttp.send();
+  });
 }
 
 function fetchData() {
