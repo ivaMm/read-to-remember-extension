@@ -13,14 +13,29 @@ function getAuthors() {
 
 function getAsins() {
   const allAsins = document.getElementsByClassName("a-row kp-notebook-library-each-book");
-  return Array.prototype.map.call(allAsins, function(a) { return a.id; }).join(" ");
+  return Array.prototype.map.call(allAsins, function(a) { return `https://read.amazon.com/kp/notebook?contentLimitState=BLAHBLAHBLAH&index=52&asin=${a.id}` }); //.join(" ");
 }
 
-function getHighlights() {  // just first book!
-  // iterate through asins
-  //window.location.href = `https://read.amazon.com/kp/notebook?contentLimitState=BLAHBLAHBLAH&index=52&asin=B083D667N2` //=> ${asin}
-  const allHighlights = document.getElementsByClassName("kp-notebook-highlight");
-  return Array.prototype.map.call(allHighlights, function(b) { return b.textContent; }).join("| ");
+function getHighlights() {  // iterate through all books; return hash {title: title, author: author, highlights: [{content: content, location: location, note: note}] }
+  const urls = getAsins();
+  //urls.forEach(url => function() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      let doc = this.responseXML;
+      const allHighlights = doc.getElementsByClassName("kp-notebook-highlight");
+      const highlights = Array.prototype.map.call(allHighlights, function(b) { return b.textContent; }).join("| ");
+      const title = doc.querySelector('h3').textContent;
+      alert(title + ", HIGHLIGHTS: " + highlights);
+    }
+  };
+  // iterate
+  //urls.forEach(url => function() {
+  xhttp.open("GET", `${urls[3]}`, true);
+  xhttp.responseType = "document";
+  xhttp.send();
+//})
+
 }
 
 function fetchData() {
