@@ -1,0 +1,34 @@
+{
+  "name": "ReadToRemember extension",
+  "description": "Import your Kindle Highlights",
+  "version": "1.0",
+  "permissions": [
+    "tabs","<all_urls>"
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
+  "browser_action": {
+    "default_icon": "images/icon.png"
+  },
+  "icons": {
+    "16":  "images/icon.png",
+    "32":  "images/icon.png",
+    "48":  "images/icon.png",
+    "128":  "images/icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://read.amazon.com/notebook?*",
+        "https://read.amazon.com/kp/notebook?*",
+        "https://lesen.amazon.de/notebook?*",
+        "https://lesen.amazon.de/kp/notebook?*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_end"  // Pay attention to this line
+    }
+  ],
+  "manifest_version": 2
+}
