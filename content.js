@@ -16,12 +16,17 @@ function getAsins() {
   return Array.prototype.map.call(allAsins, function(a) { return `https://read.amazon.com/kp/notebook?contentLimitState=BLAHBLAHBLAH&index=52&asin=${a.id}` }); //.join(" ");
 }
 
-function getHighlights() {  // iterate through all books; return hash {title: title, author: author, highlights: [{content: content, location: location, note: note}] }
+function getHighlights(callback) {  // RETURN please!
   const urls = getAsins();
   //urls.forEach(url => function() {
   urlss = [urls[0], urls[4], urls[21]]; //atm
+
   urlss.forEach(url => {
     var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", `${url}`, true);
+    xhttp.responseType = "document";
+    xhttp.send();
+
     xhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
         let doc = this.responseXML;
@@ -35,7 +40,6 @@ function getHighlights() {  // iterate through all books; return hash {title: ti
         const allNotes = doc.querySelectorAll('#note');
         const notes = Array.prototype.map.call(allNotes, function(b) { return b.textContent; }); //.join("| ");
 
-
         const arrHighlightHash = highlights.map((h, index) => {
           return {
             content: h,
@@ -47,23 +51,30 @@ function getHighlights() {  // iterate through all books; return hash {title: ti
         const str = arrHighlightHash.map(hh => `${hh.content}, page: ${hh.location} , note: ${hh.note}`);
         const title = doc.querySelector('h3').textContent;
         const author = doc.querySelector('p.a-spacing-none.a-spacing-top-micro.a-size-base.a-color-secondary.kp-notebook-selectable.kp-notebook-metadata').textContent;
-        alert(`BOOK: ${title}, AUTHOR: ${author}, HIGHLIGHTS: ${str.join(" | ")}`); //atm
+        const result = [{ title: title, author: author, highlights: str.join(" | ") }];
+        const resultDisplay = result.map(h => `BOOK: ${h.title}, AUTHOR: ${h.author}, HIGHLIGHTS: ${h.highlights}`);
+
+        //alert(`BOOK: ${title}, AUTHOR: ${author}, HIGHLIGHTS: ${str.join(" | ")}`); //atm
+        alert(resultDisplay);
+        if(callback) callback(resultDisplay);
       }
     };
-    xhttp.open("GET", `${url}`, true);
-    xhttp.responseType = "document";
-    xhttp.send();
   });
 }
+/*
+getHighlights(function(resultDisplay){
+    console.log(resultDisplay);
+}); */
 
 function fetchData() {
+  let highlights = [];
  return {
     //title: title,
     //url: url,
     books: getBooks(),
     authors: getAuthors(),
     asins: getAsins(),
-    highlights: getHighlights()
+    highlights: highlights.push(getHighlights(function(resultDisplay) { return resultDisplay; })) //getHighlights()
   }
 }
 
@@ -79,5 +90,6 @@ function sendData(data) {
   })
   alert('We are importing your highlights, please wait'); //atm
 }
+
 
 sendData(fetchData());
