@@ -19,17 +19,35 @@ function getAsins() {
 function getHighlights() {  // iterate through all books; return hash {title: title, author: author, highlights: [{content: content, location: location, note: note}] }
   const urls = getAsins();
   //urls.forEach(url => function() {
-  let highlights = [];
-  urlss = [urls[0], urls[3], urls[21]]; //atm
+  urlss = [urls[0], urls[4], urls[21]]; //atm
   urlss.forEach(url => {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
         let doc = this.responseXML;
-        const allHighlights = doc.getElementsByClassName("kp-notebook-highlight");
-        highlights.push(Array.prototype.map.call(allHighlights, function(b) { return b.textContent; }).join("| "));
+
+        const allHighlights = doc.querySelectorAll("span#highlight");
+        const highlights = Array.prototype.map.call(allHighlights, function(b) { return b.textContent; }); //.join("| ");
+
+        const allLocations = doc.querySelectorAll('#annotationHighlightHeader');
+        const locations = Array.prototype.map.call(allLocations, function(b) { return (b.textContent).replace(/.+[^\d]/, ""); }); //.join("| ");
+
+        const allNotes = doc.querySelectorAll('#note');
+        const notes = Array.prototype.map.call(allNotes, function(b) { return b.textContent; }); //.join("| ");
+
+
+        const arrHighlightHash = highlights.map((h, index) => {
+          return {
+            content: h,
+            location: locations[index],
+            note: notes[index]
+          }
+        });
+
+        const str = arrHighlightHash.map(hh => `${hh.content}, page: ${hh.location} , note: ${hh.note}`);
         const title = doc.querySelector('h3').textContent;
-        alert(title + ", HIGHLIGHTS: " + highlights); //atm
+        const author = doc.querySelector('p.a-spacing-none.a-spacing-top-micro.a-size-base.a-color-secondary.kp-notebook-selectable.kp-notebook-metadata').textContent;
+        alert(`BOOK: ${title}, AUTHOR: ${author}, HIGHLIGHTS: ${str.join(" | ")}`); //atm
       }
     };
     xhttp.open("GET", `${url}`, true);
