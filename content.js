@@ -1,12 +1,12 @@
-console.log("Hello");
+console.log("Hello Patrik :)");
 // document.body.style.filter = 'blur(5px)';
 
-function getBooks() {
+function getBooks() {  // we don't actully need this one
   const allBooks = document.querySelectorAll('h2'); //h3
   return Array.prototype.map.call(allBooks, function(b) { return b.textContent; }).join("| ");
 }
 
-function getAuthors() {
+function getAuthors() { // we don't actully need this one
   const allAuthors = document.querySelectorAll('p.a-spacing-base.a-spacing-top-mini.a-text-center.a-size-base.a-color-secondary.kp-notebook-searchable');
   return Array.prototype.map.call(allAuthors, function(a) { return a.textContent.slice(4); }).join("| ");
 }
@@ -16,10 +16,10 @@ function getAsins() {
   return Array.prototype.map.call(allAsins, function(a) { return `https://read.amazon.com/kp/notebook?contentLimitState=BLAHBLAHBLAH&index=52&asin=${a.id}` }); //.join(" ");
 }
 
-function getHighlights(callback) {  // RETURN please!
+function getHighlights(callback) {  // RETURN please! => so, need to do smtng here..'asynchronous call' problem...
   const urls = getAsins();
   //urls.forEach(url => function() {
-  urlss = [urls[0], urls[4], urls[21]]; //atm
+  urlss = [urls[0], urls[4], urls[21]]; //atm - just to not iterate through all (it can take some time)
 
   urlss.forEach(url => {
     var xhttp = new XMLHttpRequest();
@@ -55,7 +55,7 @@ function getHighlights(callback) {  // RETURN please!
         const resultDisplay = result.map(h => `BOOK: ${h.title}, AUTHOR: ${h.author}, HIGHLIGHTS: ${h.highlights}`);
 
         //alert(`BOOK: ${title}, AUTHOR: ${author}, HIGHLIGHTS: ${str.join(" | ")}`); //atm
-        alert(resultDisplay);
+        alert(resultDisplay); // atm
         if(callback) callback(resultDisplay);
       }
     };
@@ -74,7 +74,7 @@ function fetchData() {
     books: getBooks(),
     authors: getAuthors(),
     asins: getAsins(),
-    highlights: highlights.push(getHighlights(function(resultDisplay) { return resultDisplay; })) //getHighlights()
+    highlights: highlights.push(getHighlights(function(resultDisplay) { console.log(resultDisplay); })) // console.log works, return not really
   }
 }
 
@@ -88,8 +88,8 @@ function sendData(data) {
       "content": `I've found something cool! Your books: ${data.books} & authors: ${data.authors} & ASINS ${data.asins} & highlights: ${data.highlights}`
     })
   })
-  alert('We are importing your highlights, please wait'); //atm
+  alert('We are importing your highlights, please wait'); // atm
 }
 
-
+// alert == 'frontend' :D - smtng that has yet to be done
 sendData(fetchData());

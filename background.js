@@ -16,7 +16,7 @@ function refreshBrowser(target, bringToForeground) {
       win.tabs.forEach(function(tab)
       {
         // Ignore tabs not matching the target.
-        if (target === 'read-amazon') {
+        if (target === 'read-amazon') { // check read.amazon.com & lesen.amazon.de => check all possibilities?
           if (!/https:\/\/read|lesen\.amazon\.com|de(\/kp)?\/notebook\?.*/.test(tab.url)) return;
         }
         else
@@ -31,7 +31,7 @@ function refreshBrowser(target, bringToForeground) {
           foundExisting = true;
         });
       });
-      // If no gmail tab found, just open a new one.
+      // If no amazon notebook tab found, just open a new one.
       if (bringToForeground && !foundExisting)
 
       {
